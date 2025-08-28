@@ -7,8 +7,8 @@ interface ButtonComponentProps {
 
 const ButtonComponent: React.FC<ButtonComponentProps> = ({ component }) => {
   return (
-    <button 
-      className="button-component" 
+    <button
+      className="button-component"
       style={component.attributes.style}
       onClick={() => console.log(`Button ${component.id} clicked`)}
     >

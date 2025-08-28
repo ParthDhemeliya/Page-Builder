@@ -1,4 +1,4 @@
-export type ComponentType = "Text" | "Button" | "NumberField" | "FormulaField";
+export type ComponentType = 'Text' | 'Button' | 'NumberField' | 'FormulaField';
 
 export interface ComponentAttributes {
   label?: string;
