@@ -1,9 +1,8 @@
-import React from 'react';
 import './App.css';
-import { PageComponent } from './types';
+import type { PageComponent } from './types';
 import ComponentRenderer from './components/ComponentRenderer';
 
-// Dummy config as described in Day 1 update
+// Dummy config
 const pageConfig: PageComponent[] = [
   { id: '1', type: 'Text', attributes: { label: 'Hello World' } },
   { id: '2', type: 'Button', attributes: { label: 'Click Me' } },

@@ -1,5 +1,4 @@
-import React from 'react';
-import { PageComponent } from '../types';
+import type { PageComponent } from '../types';
 import TextComponent from './TextComponent';
 import ButtonComponent from './ButtonComponent';
 import NumberFieldComponent from './NumberFieldComponent';

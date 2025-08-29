@@ -1,3 +1,5 @@
+import React from 'react';
+
 export type ComponentType = 'Text' | 'Button' | 'NumberField' | 'FormulaField';
 
 export interface ComponentAttributes {
