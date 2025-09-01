@@ -21,7 +21,7 @@ const ComponentRenderer: React.FC<ComponentRendererProps> = ({
     case 'NumberField':
       return <NumberFieldComponent component={component} />;
     case 'FormulaField':
-      return <FormulaFieldComponent component={component} />;
+      return <FormulaFieldComponent component={component} dataset={dataset} />;
     default:
       return <div>Unknown component type: {component.type}</div>;
   }

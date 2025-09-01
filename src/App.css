@@ -288,47 +288,64 @@
 .formula-field-component label {
   font-weight: 500;
   color: #495057;
-  cursor: text;
-  padding: 2px 4px;
-  border-radius: 3px;
-  transition: background-color 0.15s ease;
   font-size: 14px;
 }
 
-.number-field-component label:hover,
-.formula-field-component label:hover {
+.formula-display {
   background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.label-input {
-  width: 100%;
-  font-weight: 500;
+.formula-expression,
+.formula-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.formula-label,
+.result-label {
+  font-weight: 600;
   color: #495057;
-  background-color: #fff3cd;
-  border: 1px solid #ffeaa7;
+  min-width: 60px;
+}
+
+.formula-text {
+  color: #6c757d;
+  font-family: monospace;
+  background-color: #e9ecef;
+  padding: 2px 6px;
   border-radius: 3px;
-  padding: 2px 4px;
-  font-size: inherit;
-  font-family: inherit;
-  outline: none;
+  flex: 1;
 }
 
-.label-input:focus {
-  background-color: #fff8dc;
-  border-color: #fdcb6e;
+.result-value {
+  color: #28a745;
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
-.number-field-component input,
-.formula-field-component input {
+.result-error {
+  color: #dc3545;
+  font-style: italic;
+}
+
+.formula-input {
   padding: 10px;
   border: 1px solid #ced4da;
   border-radius: 4px;
   font-size: 14px;
   background-color: #f8f9fa;
+  font-family: monospace;
 }
 
-.number-field-component input:focus,
-.formula-field-component input:focus {
+.formula-input:focus {
   outline: none;
   border-color: #007bff;
   background-color: white;
