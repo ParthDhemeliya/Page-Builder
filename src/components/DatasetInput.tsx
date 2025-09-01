@@ -122,7 +122,7 @@ const DatasetInput: React.FC<DatasetInputProps> = ({
             <li>
               Use <code>{'{key}'}</code> in text labels to display values
             </li>
-            <li>Example: "Price: {price}" will show "Price: 100"</li>
+            <li>Example: "Price: {'{price}'}" will show "Price: 100"</li>
           </ul>
         </div>
       </div>
