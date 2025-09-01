@@ -54,6 +54,7 @@ const DatasetInput: React.FC<DatasetInputProps> = ({
   const handleLoadSample = () => {
     const sampleDataset = {
       price: 100,
+      quantity: 5,
       name: 'Product Name',
       description: 'Sample product description',
       stock: 50,
