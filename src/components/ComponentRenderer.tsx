@@ -1,4 +1,4 @@
-import type { PageComponent } from '../types';
+import type { PageComponent, Dataset } from '../types';
 import TextComponent from './TextComponent';
 import ButtonComponent from './ButtonComponent';
 import NumberFieldComponent from './NumberFieldComponent';
@@ -6,12 +6,16 @@ import FormulaFieldComponent from './FormulaFieldComponent';
 
 interface ComponentRendererProps {
   component: PageComponent;
+  dataset?: Dataset | null;
 }
 
-const ComponentRenderer: React.FC<ComponentRendererProps> = ({ component }) => {
+const ComponentRenderer: React.FC<ComponentRendererProps> = ({
+  component,
+  dataset,
+}) => {
   switch (component.type) {
     case 'Text':
-      return <TextComponent component={component} />;
+      return <TextComponent component={component} dataset={dataset} />;
     case 'Button':
       return <ButtonComponent component={component} />;
     case 'NumberField':
