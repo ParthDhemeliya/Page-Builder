@@ -1,3 +1,4 @@
+import React from 'react';
 import type { PageComponent } from '../types';
 
 interface ButtonComponentProps {
@@ -5,11 +6,16 @@ interface ButtonComponentProps {
 }
 
 const ButtonComponent: React.FC<ButtonComponentProps> = ({ component }) => {
+  const handleButtonClick = () => {
+    console.log('Button clicked:', component.id, component.attributes.label);
+    console.log('Button details:', component);
+  };
+
   return (
     <button
       className="button-component"
       style={component.attributes.style}
-      onClick={() => console.log(`Button ${component.id} clicked`)}
+      onClick={handleButtonClick}
     >
       {component.attributes.label || 'Button'}
     </button>

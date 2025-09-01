@@ -1,3 +1,4 @@
+import React from 'react';
 import type { PageComponent } from '../types';
 
 interface FormulaFieldComponentProps {
@@ -7,16 +8,20 @@ interface FormulaFieldComponentProps {
 const FormulaFieldComponent: React.FC<FormulaFieldComponentProps> = ({
   component,
 }) => {
+  const handleFormulaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    console.log('Formula changed:', component.id, value);
+    console.log('Field details:', component);
+  };
+
   return (
     <div className="formula-field-component" style={component.attributes.style}>
-      <label>{component.attributes.label || 'Formula Field'}</label>
+      <label>{component.attributes.label || 'Enter a formula'}</label>
       <input
         type="text"
-        placeholder="Enter formula expression"
+        placeholder="Type your formula here"
         defaultValue={component.attributes.formulaExpression || ''}
-        onChange={e =>
-          console.log(`Formula field ${component.id} value:`, e.target.value)
-        }
+        onChange={handleFormulaChange}
       />
     </div>
   );

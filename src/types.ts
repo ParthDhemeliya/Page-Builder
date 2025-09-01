@@ -7,12 +7,19 @@ export interface ComponentAttributes {
   datasetKey?: string;
   formulaExpression?: string;
   style?: React.CSSProperties;
+  author?: string;
 }
 
 export interface PageComponent {
   id: string;
   type: ComponentType;
   attributes: ComponentAttributes;
+  author: string;
+  createdAt: string;
 }
 
 export type PageConfig = PageComponent[];
+
+export interface Dataset {
+  [key: string]: string | number | boolean;
+}
