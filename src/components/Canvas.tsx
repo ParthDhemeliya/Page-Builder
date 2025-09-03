@@ -2,7 +2,7 @@ import React from 'react';
 import type { PageComponent, Dataset } from '../types';
 import ComponentRenderer from './ComponentRenderer';
 
-interface CanvasProps {
+interface Props {
   components: PageComponent[];
   onRemoveComponent: (id: string) => void;
   onSelectComponent: (component: PageComponent) => void;
@@ -10,17 +10,21 @@ interface CanvasProps {
   dataset?: Dataset | null;
 }
 
-const Canvas: React.FC<CanvasProps> = ({
+const Canvas: React.FC<Props> = ({
   components,
   onRemoveComponent,
   onSelectComponent,
   selectedComponent,
   dataset,
 }) => {
+  // show empty state if no components
   if (components.length === 0) {
     return (
-      <div className="canvas-empty">
-        <p>Nothing here yet. Add some stuff from the left!</p>
+      <div className="canvas">
+        <h3>Your page</h3>
+        <div className="canvas-empty">
+          <p>No components yet. Add some from the left.</p>
+        </div>
       </div>
     );
   }
@@ -43,7 +47,7 @@ const Canvas: React.FC<CanvasProps> = ({
                   e.stopPropagation();
                   onRemoveComponent(component.id);
                 }}
-                title="Delete this"
+                title="Remove"
               >
                 ×
               </button>

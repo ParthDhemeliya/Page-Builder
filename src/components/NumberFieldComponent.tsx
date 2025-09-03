@@ -1,26 +1,24 @@
 import React from 'react';
 import type { PageComponent } from '../types';
 
-interface NumberFieldComponentProps {
+interface Props {
   component: PageComponent;
 }
 
-const NumberFieldComponent: React.FC<NumberFieldComponentProps> = ({
-  component,
-}) => {
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    console.log('Number changed:', component.id, value);
-    console.log('Field details:', component);
+const NumberFieldComponent: React.FC<Props> = ({ component }) => {
+  // handle number input changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('Number changed:', e.target.value);
   };
 
   return (
     <div className="number-field-component" style={component.attributes.style}>
-      <label>{component.attributes.label || 'Enter a number'}</label>
+      <label>{component.attributes.label || 'Number'}</label>
       <input
         type="number"
-        placeholder="Type a number here"
-        onChange={handleNumberChange}
+        placeholder="Enter number"
+        onChange={handleChange}
+        style={{ color: '#007bff' }}
       />
     </div>
   );

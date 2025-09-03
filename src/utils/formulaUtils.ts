@@ -1,5 +1,6 @@
 import type { Dataset } from '../types';
 
+// evaluate mathematical formula with dataset values
 export const evaluateFormula = (
   formula: string,
   dataset: Dataset
@@ -9,28 +10,54 @@ export const evaluateFormula = (
   }
 
   try {
-    // Replace dataset keys with their values
+    // replace dataset keys with their values
     let processedFormula = formula;
 
-    // Replace {key} patterns with actual values from dataset
+    // replace {key} patterns with actual values from dataset
     processedFormula = processedFormula.replace(
       /\{([^}]+)\}/g,
       (_match, key) => {
-        const value = dataset[key];
-        if (value === undefined) {
-          throw new Error(`Dataset key '${key}' not found`);
+        // Handle complex expressions like "price * quantity"
+        if (
+          key.includes('*') ||
+          key.includes('+') ||
+          key.includes('-') ||
+          key.includes('/')
+        ) {
+          // Split by operators and replace each key
+          let expression = key;
+
+          // Replace each dataset key in the expression
+          for (const datasetKey of Object.keys(dataset)) {
+            const regex = new RegExp(`\\b${datasetKey}\\b`, 'g');
+            expression = expression.replace(regex, String(dataset[datasetKey]));
+          }
+
+          // Check if any keys remain unreplaced
+          const remainingKeys = expression.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g);
+          if (remainingKeys && remainingKeys.length > 0) {
+            throw new Error(`Dataset key '${remainingKeys[0]}' not found`);
+          }
+
+          return `(${expression})`;
+        } else {
+          // Simple key replacement
+          const value = dataset[key];
+          if (value === undefined) {
+            throw new Error(`Dataset key '${key}' not found`);
+          }
+          return String(value);
         }
-        return String(value);
       }
     );
 
-    // Validate the formula contains only safe characters
+    // validate the formula contains only safe characters
     const safePattern = /^[0-9+\-*/().\s]+$/;
     if (!safePattern.test(processedFormula)) {
       throw new Error('Formula contains unsafe characters');
     }
 
-    // Evaluate the formula safely
+    // evaluate the formula safely
     const result = Function(
       '"use strict"; return (' + processedFormula + ')'
     )();
@@ -48,6 +75,7 @@ export const evaluateFormula = (
   }
 };
 
+// format formula for display by replacing keys with values
 export const formatFormulaDisplay = (
   formula: string,
   dataset: Dataset
@@ -56,8 +84,27 @@ export const formatFormulaDisplay = (
 
   try {
     return formula.replace(/\{([^}]+)\}/g, (match, key) => {
-      const value = dataset[key];
-      return value !== undefined ? String(value) : match;
+      // Handle complex expressions like "price * quantity"
+      if (
+        key.includes('*') ||
+        key.includes('+') ||
+        key.includes('-') ||
+        key.includes('/')
+      ) {
+        let expression = key;
+
+        // Replace each dataset key in the expression
+        for (const datasetKey of Object.keys(dataset)) {
+          const regex = new RegExp(`\\b${datasetKey}\\b`, 'g');
+          expression = expression.replace(regex, String(dataset[datasetKey]));
+        }
+
+        return expression;
+      } else {
+        // Simple key replacement
+        const value = dataset[key];
+        return value !== undefined ? String(value) : match;
+      }
     });
   } catch {
     return formula;

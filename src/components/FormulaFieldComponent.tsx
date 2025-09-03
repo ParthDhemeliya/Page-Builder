@@ -2,23 +2,21 @@ import React from 'react';
 import type { PageComponent, Dataset } from '../types';
 import { evaluateFormula, formatFormulaDisplay } from '../utils/formulaUtils';
 
-interface FormulaFieldComponentProps {
+interface Props {
   component: PageComponent;
   dataset?: Dataset | null;
 }
 
-const FormulaFieldComponent: React.FC<FormulaFieldComponentProps> = ({
-  component,
-  dataset,
-}) => {
-  const formulaExpression = component.attributes.formulaExpression || '';
-  const formulaResult = evaluateFormula(formulaExpression, dataset || {});
-  const displayFormula = formatFormulaDisplay(formulaExpression, dataset || {});
+const FormulaFieldComponent: React.FC<Props> = ({ component, dataset }) => {
+  const formula = component.attributes.formulaExpression || '';
+  // evaluate formula with dataset values
+  const result = evaluateFormula(formula, dataset || {});
+  // format formula for display
+  const display = formatFormulaDisplay(formula, dataset || {});
 
-  const handleFormulaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    console.log('Formula changed:', component.id, value);
-    console.log('Field details:', component);
+  // handle formula input changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('Formula changed:', e.target.value);
   };
 
   return (
@@ -28,16 +26,16 @@ const FormulaFieldComponent: React.FC<FormulaFieldComponentProps> = ({
       <div className="formula-display">
         <div className="formula-expression">
           <span className="formula-label">Formula:</span>
-          <span className="formula-text">{displayFormula || 'No formula'}</span>
+          <span className="formula-text">{display || 'No formula'}</span>
         </div>
 
         <div className="formula-result">
           <span className="result-label">Result:</span>
-          {formulaResult.success ? (
-            <span className="result-value">{formulaResult.result}</span>
+          {result.success ? (
+            <span className="result-value">{result.result}</span>
           ) : (
             <span className="result-error">
-              {formulaResult.error || 'Invalid formula'}
+              {result.error || 'Invalid formula'}
             </span>
           )}
         </div>
@@ -46,9 +44,10 @@ const FormulaFieldComponent: React.FC<FormulaFieldComponentProps> = ({
       <input
         type="text"
         placeholder="Enter formula (e.g., {price} * {quantity})"
-        defaultValue={formulaExpression}
-        onChange={handleFormulaChange}
+        defaultValue={formula}
+        onChange={handleChange}
         className="formula-input"
+        style={{ color: '#007bff' }}
       />
     </div>
   );
