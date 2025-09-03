@@ -108,6 +108,11 @@ function App() {
     setSelectedComponent(component);
   };
 
+  // reorder components
+  const reorderComponents = (newComponents: PageComponent[]) => {
+    setComponents(newComponents);
+  };
+
   // update component properties
   const updateComponent = (updatedComponent: PageComponent) => {
     setComponents(prev =>
@@ -123,35 +128,45 @@ function App() {
     setDataset(newDataset);
   };
 
-  return (
-    <div className="app container mx-auto p-5">
-      <header className="app-header text-center mb-6 pb-5 border-b">
-        <h1 className="text-3xl font-semibold text-slate-800">Page Builder</h1>
-        <p className="text-slate-500">Build pages with dynamic data</p>
+  // handle generate button click
 
-        <div className="preview-toggle flex items-center justify-center gap-3 mt-4">
-          <span className="text-sm text-slate-600">Builder</span>
-          <label className="preview-toggle-switch">
-            <input
-              type="checkbox"
-              checked={isPreviewMode}
-              onChange={e => setIsPreviewMode(e.target.checked)}
-            />
-            <span className="preview-toggle-slider"></span>
-          </label>
-          <span className="text-sm text-slate-600">Preview</span>
+  return (
+    <div
+      className="app"
+      style={{ width: '100%', padding: '20px', boxSizing: 'border-box' }}
+    >
+      <header className="app-header mb-6 pb-5 border-b">
+        <div className="flex items-start justify-between">
+          <div className="text-left">
+            <h1 className="text-3xl font-semibold text-slate-800 mb-1">
+              Page Builder
+            </h1>
+            <p className="text-slate-500 text-sm">
+              Build pages with dynamic data
+            </p>
+          </div>
+          <div className="preview-toggle flex items-center gap-3">
+            <span className="text-sm text-slate-600">Builder</span>
+            <label className="preview-toggle-switch">
+              <input
+                type="checkbox"
+                checked={isPreviewMode}
+                onChange={e => setIsPreviewMode(e.target.checked)}
+              />
+              <span className="preview-toggle-slider"></span>
+            </label>
+            <span className="text-sm text-slate-600">Preview</span>
+          </div>
         </div>
       </header>
 
       {isPreviewMode ? (
-        <div className="renderer-mode">
-          <main className="main-content">
-            <StaticRenderer
-              components={components}
-              dataset={dataset}
-              title="Generated Page"
-            />
-          </main>
+        <div className="preview-section">
+          <StaticRenderer
+            components={components}
+            dataset={dataset}
+            title="Generated Page"
+          />
         </div>
       ) : (
         <div className="app-layout builder-mode grid gap-6">
@@ -168,6 +183,7 @@ function App() {
               components={components}
               onRemoveComponent={removeComponent}
               onSelectComponent={selectComponent}
+              onReorderComponents={reorderComponents}
               selectedComponent={selectedComponent}
               dataset={dataset}
             />

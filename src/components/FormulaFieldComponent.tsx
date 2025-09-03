@@ -19,6 +19,9 @@ const FormulaFieldComponent: React.FC<Props> = ({ component, dataset }) => {
     console.log('Formula changed:', e.target.value);
   };
 
+  // Check if we're in static renderer mode
+  const isStaticRenderer = !dataset;
+
   return (
     <div className="formula-field-component" style={component.attributes.style}>
       <label>{component.attributes.label || 'Formula Result'}</label>
@@ -41,14 +44,17 @@ const FormulaFieldComponent: React.FC<Props> = ({ component, dataset }) => {
         </div>
       </div>
 
-      <input
-        type="text"
-        placeholder="Enter formula (e.g., {price} * {quantity})"
-        defaultValue={formula}
-        onChange={handleChange}
-        className="formula-input"
-        style={{ color: '#007bff' }}
-      />
+      {/* Only show input in builder mode, not in static renderer */}
+      {!isStaticRenderer && (
+        <input
+          type="text"
+          placeholder="Enter formula (e.g., {price} * {quantity})"
+          defaultValue={formula}
+          onChange={handleChange}
+          className="formula-input"
+          style={{ color: '#007bff' }}
+        />
+      )}
     </div>
   );
 };
