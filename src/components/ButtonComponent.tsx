@@ -1,21 +1,21 @@
 import React from 'react';
 import type { PageComponent } from '../types';
 
-interface ButtonComponentProps {
+interface Props {
   component: PageComponent;
 }
 
-const ButtonComponent: React.FC<ButtonComponentProps> = ({ component }) => {
-  const handleButtonClick = () => {
-    console.log('Button clicked:', component.id, component.attributes.label);
-    console.log('Button details:', component);
+const ButtonComponent: React.FC<Props> = ({ component }) => {
+  // handle button click
+  const handleClick = () => {
+    console.log('Button clicked:', component.attributes.label);
   };
 
   return (
     <button
       className="button-component"
       style={component.attributes.style}
-      onClick={handleButtonClick}
+      onClick={handleClick}
     >
       {component.attributes.label || 'Button'}
     </button>

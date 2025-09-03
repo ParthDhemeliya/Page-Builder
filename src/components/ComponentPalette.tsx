@@ -1,31 +1,29 @@
 import React from 'react';
 import type { ComponentType } from '../types';
 
-interface ComponentPaletteProps {
+interface Props {
   onAddComponent: (type: ComponentType) => void;
 }
 
-const ComponentPalette: React.FC<ComponentPaletteProps> = ({
-  onAddComponent,
-}) => {
-  const componentTypes: { type: ComponentType; label: string; icon: string }[] =
-    [
-      { type: 'Text', label: 'Add some text', icon: 'T' },
-      { type: 'Button', label: 'Add a button', icon: 'B' },
-      { type: 'NumberField', label: 'Add a number field', icon: 'N' },
-      { type: 'FormulaField', label: 'Add a formula field', icon: 'F' },
-    ];
+const ComponentPalette: React.FC<Props> = ({ onAddComponent }) => {
+  // available component types
+  const types = [
+    { type: 'Text' as ComponentType, label: 'Text', icon: 'T' },
+    { type: 'Button' as ComponentType, label: 'Button', icon: 'B' },
+    { type: 'NumberField' as ComponentType, label: 'Number', icon: 'N' },
+    { type: 'FormulaField' as ComponentType, label: 'Formula', icon: 'F' },
+  ];
 
   return (
     <div className="component-palette">
-      <h3>What do you want to add?</h3>
+      <h3>Components</h3>
       <div className="palette-buttons">
-        {componentTypes.map(({ type, label, icon }) => (
+        {types.map(({ type, label, icon }) => (
           <button
             key={type}
             className="palette-button"
             onClick={() => onAddComponent(type)}
-            title={label}
+            title={`Add ${label}`}
           >
             <span className="palette-icon">{icon}</span>
             <span className="palette-label">{label}</span>

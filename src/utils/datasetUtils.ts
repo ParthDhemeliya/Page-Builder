@@ -1,5 +1,6 @@
 import type { Dataset } from '../types';
 
+// parse JSON string to dataset object
 export const parseDataset = (
   jsonString: string
 ): { success: boolean; data?: Dataset; error?: string } => {
@@ -30,6 +31,7 @@ export const parseDataset = (
   }
 };
 
+// replace {key} patterns in text with dataset values
 export const replaceDatasetKeys = (text: string, dataset: Dataset): string => {
   if (!text || !dataset) return text;
 
@@ -40,6 +42,7 @@ export const replaceDatasetKeys = (text: string, dataset: Dataset): string => {
   });
 };
 
+// check if key exists in dataset
 export const validateDatasetKey = (key: string, dataset: Dataset): boolean => {
   return key in dataset;
 };

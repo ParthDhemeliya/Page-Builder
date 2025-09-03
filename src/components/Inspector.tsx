@@ -1,67 +1,73 @@
 import React from 'react';
 import type { PageComponent } from '../types';
 
-interface InspectorProps {
+interface Props {
   selectedComponent: PageComponent | null;
   onUpdateComponent: (updatedComponent: PageComponent) => void;
 }
 
-const Inspector: React.FC<InspectorProps> = ({
+const Inspector: React.FC<Props> = ({
   selectedComponent,
   onUpdateComponent,
 }) => {
+  // show empty state if no component selected
   if (!selectedComponent) {
     return (
       <div className="inspector">
         <h3>Inspector</h3>
         <div className="inspector-empty">
-          <p>Select a component to edit its properties</p>
+          <p>Click a component to edit</p>
         </div>
       </div>
     );
   }
 
-  const handleAttributeChange = (key: string, value: string) => {
-    const updatedComponent: PageComponent = {
+  // update component attribute
+  const handleChange = (key: string, value: string | number) => {
+    const updated = {
       ...selectedComponent,
       attributes: {
         ...selectedComponent.attributes,
         [key]: value,
       },
     };
-    onUpdateComponent(updatedComponent);
+    onUpdateComponent(updated);
   };
 
-  const renderAttributeField = (
+  // render input field for component properties
+  const renderField = (
     key: string,
     label: string,
-    value: string = ''
+    value: string = '',
+    type: string = 'text'
   ) => {
     return (
       <div key={key} className="inspector-field">
         <label htmlFor={key}>{label}:</label>
         <input
           id={key}
-          type="text"
+          type={type}
           value={value}
-          onChange={e => handleAttributeChange(key, e.target.value)}
-          placeholder={`Enter ${label.toLowerCase()}`}
+          onChange={e => handleChange(key, e.target.value)}
+          placeholder={label}
+          style={{ color: '#007bff' }}
         />
       </div>
     );
   };
 
-  const renderComponentSpecificFields = () => {
+  // render fields based on component type
+  const renderFields = () => {
     switch (selectedComponent.type) {
       case 'Text':
-        return renderAttributeField(
+        return renderField(
           'label',
-          'Label',
+          'Text',
           selectedComponent.attributes.label || ''
         );
 
       case 'Button':
-        return renderAttributeField(
+        return renderField(
           'label',
           'Button Text',
           selectedComponent.attributes.label || ''
@@ -70,14 +76,14 @@ const Inspector: React.FC<InspectorProps> = ({
       case 'NumberField':
         return (
           <>
-            {renderAttributeField(
+            {renderField(
               'label',
               'Label',
               selectedComponent.attributes.label || ''
             )}
-            {renderAttributeField(
+            {renderField(
               'datasetKey',
-              'Dataset Key',
+              'Data Key',
               selectedComponent.attributes.datasetKey || ''
             )}
           </>
@@ -86,21 +92,21 @@ const Inspector: React.FC<InspectorProps> = ({
       case 'FormulaField':
         return (
           <>
-            {renderAttributeField(
+            {renderField(
               'label',
               'Label',
               selectedComponent.attributes.label || ''
             )}
-            {renderAttributeField(
+            {renderField(
               'formulaExpression',
-              'Formula Expression',
+              'Formula',
               selectedComponent.attributes.formulaExpression || ''
             )}
           </>
         );
 
       default:
-        return <div>Unknown component type</div>;
+        return <div>Unknown type</div>;
     }
   };
 
@@ -115,20 +121,18 @@ const Inspector: React.FC<InspectorProps> = ({
 
         <div className="inspector-section">
           <h5>Properties</h5>
-          {renderComponentSpecificFields()}
+          {renderFields()}
         </div>
 
         <div className="inspector-section">
-          <h5>Metadata</h5>
+          <h5>Info</h5>
           <div className="inspector-field">
-            <label>Author:</label>
-            <span>{selectedComponent.author}</span>
+            <label>ID:</label>
+            <span>{selectedComponent.id}</span>
           </div>
           <div className="inspector-field">
-            <label>Created:</label>
-            <span>
-              {new Date(selectedComponent.createdAt).toLocaleString()}
-            </span>
+            <label>Type:</label>
+            <span>{selectedComponent.type}</span>
           </div>
         </div>
       </div>

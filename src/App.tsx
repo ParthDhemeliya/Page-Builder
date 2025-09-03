@@ -1,36 +1,86 @@
-import './App.css';
 import { useState } from 'react';
-import type { PageComponent, ComponentType, Dataset } from './types';
+import './App.css';
 import ComponentPalette from './components/ComponentPalette';
 import Canvas from './components/Canvas';
 import Inspector from './components/Inspector';
 import DatasetInput from './components/DatasetInput';
+import StaticRenderer from './components/StaticRenderer';
+import type { PageComponent, ComponentType, Dataset } from './types';
 
-// Starting with some basic components
-const initialPageConfig: PageComponent[] = [
+// demo page with sample components
+const samplePage: PageComponent[] = [
   {
     id: '1',
     type: 'Text',
-    attributes: { label: 'Welcome to my page!' },
-    author: 'me',
+    attributes: { label: 'Product Summary' },
+    author: 'user',
     createdAt: new Date().toISOString(),
   },
   {
     id: '2',
+    type: 'Text',
+    attributes: { label: 'Product Name: Laptop' },
+    author: 'user',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '3',
+    type: 'Text',
+    attributes: { label: 'Unit Price: {price}' },
+    author: 'user',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '4',
+    type: 'Text',
+    attributes: { label: 'Quantity: {quantity}' },
+    author: 'user',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '5',
+    type: 'Text',
+    attributes: { label: 'Discount: {discount}' },
+    author: 'user',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '6',
+    type: 'FormulaField',
+    attributes: {
+      label: 'Total: {price * quantity}',
+      formulaExpression: '{price * quantity}',
+    },
+    author: 'user',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '7',
+    type: 'FormulaField',
+    attributes: {
+      label: 'Final: {price * quantity * (1 - discount)}',
+      formulaExpression: '{price * quantity * (1 - discount)}',
+    },
+    author: 'user',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '8',
     type: 'Button',
-    attributes: { label: 'Click here' },
-    author: 'me',
+    attributes: { label: 'Buy Now' },
+    author: 'user',
     createdAt: new Date().toISOString(),
   },
 ];
 
 function App() {
-  const [components, setComponents] =
-    useState<PageComponent[]>(initialPageConfig);
+  const [components, setComponents] = useState<PageComponent[]>(samplePage);
   const [selectedComponent, setSelectedComponent] =
     useState<PageComponent | null>(null);
   const [dataset, setDataset] = useState<Dataset | null>(null);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
 
+  // add new component to page
   const addComponent = (type: ComponentType) => {
     const newComponent: PageComponent = {
       id: Date.now().toString(),
@@ -38,27 +88,27 @@ function App() {
       attributes: {
         label: `New ${type}`,
       },
-      author: 'me',
+      author: 'user',
       createdAt: new Date().toISOString(),
     };
 
-    console.log('Added:', newComponent);
     setComponents(prev => [...prev, newComponent]);
   };
 
+  // remove component from page
   const removeComponent = (id: string) => {
-    console.log('Removed:', id);
     setComponents(prev => prev.filter(comp => comp.id !== id));
-    // Clear selection if the removed component was selected
     if (selectedComponent?.id === id) {
       setSelectedComponent(null);
     }
   };
 
+  // select component for editing
   const selectComponent = (component: PageComponent) => {
     setSelectedComponent(component);
   };
 
+  // update component properties
   const updateComponent = (updatedComponent: PageComponent) => {
     setComponents(prev =>
       prev.map(comp =>
@@ -68,43 +118,69 @@ function App() {
     setSelectedComponent(updatedComponent);
   };
 
+  // handle dataset updates
   const handleDatasetChange = (newDataset: Dataset | null) => {
     setDataset(newDataset);
   };
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>My Page Builder</h1>
-        <p className="app-subtitle">Build your own page</p>
+    <div className="app container mx-auto p-5">
+      <header className="app-header text-center mb-6 pb-5 border-b">
+        <h1 className="text-3xl font-semibold text-slate-800">Page Builder</h1>
+        <p className="text-slate-500">Build pages with dynamic data</p>
+
+        <div className="preview-toggle flex items-center justify-center gap-3 mt-4">
+          <span className="text-sm text-slate-600">Builder</span>
+          <label className="preview-toggle-switch">
+            <input
+              type="checkbox"
+              checked={isPreviewMode}
+              onChange={e => setIsPreviewMode(e.target.checked)}
+            />
+            <span className="preview-toggle-slider"></span>
+          </label>
+          <span className="text-sm text-slate-600">Preview</span>
+        </div>
       </header>
 
-      <div className="app-layout">
-        <aside className="sidebar">
-          <ComponentPalette onAddComponent={addComponent} />
-          <DatasetInput
-            dataset={dataset}
-            onDatasetChange={handleDatasetChange}
-          />
-        </aside>
+      {isPreviewMode ? (
+        <div className="renderer-mode">
+          <main className="main-content">
+            <StaticRenderer
+              components={components}
+              dataset={dataset}
+              title="Generated Page"
+            />
+          </main>
+        </div>
+      ) : (
+        <div className="app-layout builder-mode grid gap-6">
+          <aside className="sidebar bg-white rounded-lg p-5 shadow border">
+            <ComponentPalette onAddComponent={addComponent} />
+            <DatasetInput
+              dataset={dataset}
+              onDatasetChange={handleDatasetChange}
+            />
+          </aside>
 
-        <main className="main-content">
-          <Canvas
-            components={components}
-            onRemoveComponent={removeComponent}
-            onSelectComponent={selectComponent}
-            selectedComponent={selectedComponent}
-            dataset={dataset}
-          />
-        </main>
+          <main className="main-content bg-white rounded-lg p-5 shadow border">
+            <Canvas
+              components={components}
+              onRemoveComponent={removeComponent}
+              onSelectComponent={selectComponent}
+              selectedComponent={selectedComponent}
+              dataset={dataset}
+            />
+          </main>
 
-        <aside className="inspector-sidebar">
-          <Inspector
-            selectedComponent={selectedComponent}
-            onUpdateComponent={updateComponent}
-          />
-        </aside>
-      </div>
+          <aside className="inspector-sidebar bg-white rounded-lg p-5 shadow border">
+            <Inspector
+              selectedComponent={selectedComponent}
+              onUpdateComponent={updateComponent}
+            />
+          </aside>
+        </div>
+      )}
     </div>
   );
 }

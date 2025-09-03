@@ -2,19 +2,15 @@ import React from 'react';
 import type { PageComponent, Dataset } from '../types';
 import { replaceDatasetKeys } from '../utils/datasetUtils';
 
-interface TextComponentProps {
+interface Props {
   component: PageComponent;
   dataset?: Dataset | null;
 }
 
-const TextComponent: React.FC<TextComponentProps> = ({
-  component,
-  dataset,
-}) => {
-  const displayText = replaceDatasetKeys(
-    component.attributes.label || 'Type something here',
-    dataset || {}
-  );
+const TextComponent: React.FC<Props> = ({ component, dataset }) => {
+  const text = component.attributes.label || 'Enter text here';
+  // replace key with dataset values
+  const displayText = replaceDatasetKeys(text, dataset || {});
 
   return (
     <div className="text-component" style={component.attributes.style}>

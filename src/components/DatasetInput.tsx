@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Dataset } from '../types';
 import { parseDataset } from '../utils/datasetUtils';
 
-interface DatasetInputProps {
+interface Props {
   dataset: Dataset | null;
   onDatasetChange: (dataset: Dataset | null) => void;
 }
 
-const DatasetInput: React.FC<DatasetInputProps> = ({
-  dataset,
-  onDatasetChange,
-}) => {
+const DatasetInput: React.FC<Props> = ({ dataset, onDatasetChange }) => {
+  // initialize with current dataset
   const [jsonInput, setJsonInput] = useState(() => {
     if (dataset) {
       return JSON.stringify(dataset, null, 2);
@@ -19,10 +17,46 @@ const DatasetInput: React.FC<DatasetInputProps> = ({
   });
   const [error, setError] = useState<string | null>(null);
   const [isValid, setIsValid] = useState(false);
+  const [isUserTyping, setIsUserTyping] = useState(false);
+  const [typingTimeout, setTypingTimeout] = useState<number | null>(null);
 
+  // Update jsonInput when dataset prop changes from external sources
+  useEffect(() => {
+    console.log('Dataset changed:', dataset);
+    if (dataset && !isUserTyping) {
+      const expectedJson = JSON.stringify(dataset, null, 2);
+      console.log('Setting JSON input to:', expectedJson);
+      setJsonInput(expectedJson);
+      setIsValid(true);
+      setError(null);
+    }
+  }, [dataset, isUserTyping]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+    };
+  }, [typingTimeout]);
+
+  // handle JSON input changes and validation
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
+    console.log('User typed:', value);
+    setIsUserTyping(true);
     setJsonInput(value);
+
+    // Clear existing timeout
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+    // Set new timeout to reset isUserTyping after 1 second
+    const newTimeout = setTimeout(() => {
+      setIsUserTyping(false);
+    }, 1000);
+    setTypingTimeout(newTimeout);
 
     if (!value.trim()) {
       setError(null);
@@ -44,6 +78,7 @@ const DatasetInput: React.FC<DatasetInputProps> = ({
     }
   };
 
+  // clear dataset input
   const handleClear = () => {
     setJsonInput('');
     setError(null);
@@ -51,21 +86,18 @@ const DatasetInput: React.FC<DatasetInputProps> = ({
     onDatasetChange(null);
   };
 
-  const handleLoadSample = () => {
-    const sampleDataset = {
+  // load sample dataset
+  const loadSample = () => {
+    const sample = {
       price: 100,
-      quantity: 5,
-      name: 'Product Name',
-      description: 'Sample product description',
-      stock: 50,
-      category: 'Electronics',
+      quantity: 3,
+      discount: 0.1,
     };
 
-    const sampleJson = JSON.stringify(sampleDataset, null, 2);
-    setJsonInput(sampleJson);
-    setError(null);
-    setIsValid(true);
-    onDatasetChange(sampleDataset);
+    console.log('Loading sample data:', sample);
+    setIsUserTyping(false); // Allow useEffect to update the textarea
+    // Update the dataset first, which will trigger the useEffect
+    onDatasetChange(sample);
   };
 
   return (
@@ -75,15 +107,15 @@ const DatasetInput: React.FC<DatasetInputProps> = ({
         <div className="dataset-actions">
           <button
             className="dataset-button sample"
-            onClick={handleLoadSample}
-            title="Load sample dataset"
+            onClick={loadSample}
+            title="Load sample"
           >
             Sample
           </button>
           <button
             className="dataset-button clear"
             onClick={handleClear}
-            title="Clear dataset"
+            title="Clear"
           >
             Clear
           </button>
@@ -91,14 +123,15 @@ const DatasetInput: React.FC<DatasetInputProps> = ({
       </div>
 
       <div className="dataset-content">
-        <label htmlFor="dataset-json">JSON Dataset:</label>
+        <label htmlFor="dataset-json">JSON Data:</label>
         <textarea
           id="dataset-json"
           value={jsonInput}
           onChange={handleJsonChange}
-          placeholder='{"price": 100, "name": "Product"}'
+          placeholder='{"price": 100, "quantity": 3, "discount": 0.1}'
           className={`dataset-textarea ${error ? 'error' : ''} ${isValid ? 'valid' : ''}`}
           rows={8}
+          style={{ resize: 'vertical', color: '#007bff' }}
         />
 
         {error && (
@@ -111,19 +144,19 @@ const DatasetInput: React.FC<DatasetInputProps> = ({
         {isValid && dataset && (
           <div className="dataset-info">
             <span className="success-icon">✓</span>
-            Dataset loaded with {Object.keys(dataset).length} keys:{' '}
+            Loaded {Object.keys(dataset).length} keys:{' '}
             {Object.keys(dataset).join(', ')}
           </div>
         )}
 
         <div className="dataset-help">
-          <h4>How to use:</h4>
+          <h4>Usage:</h4>
           <ul>
-            <li>Enter a valid JSON object</li>
+            <li>Enter valid JSON</li>
             <li>
-              Use <code>{'{key}'}</code> in text labels to display values
+              Use <code>{'{key}'}</code> in text to show values
             </li>
-            <li>Example: "Price: {'{price}'}" will show "Price: 100"</li>
+            <li>Example: "Price: {'{price}'}" shows "Price: 100"</li>
           </ul>
         </div>
       </div>
