@@ -52,7 +52,7 @@ const DatasetInput: React.FC<Props> = ({ dataset, onDatasetChange }) => {
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
-    // Set new timeout to reset isUserTyping after 1 second
+    // Set new timeout to reset isUserTyping after
     const newTimeout = setTimeout(() => {
       setIsUserTyping(false);
     }, 1000);

@@ -9,6 +9,12 @@ export interface ComponentAttributes {
   datasetKey?: string;
   formulaExpression?: string;
   style?: React.CSSProperties;
+  // Button-specific properties
+  action?: string;
+  alertMessage?: string;
+  navigateUrl?: string;
+  customAction?: string;
+  buttonStyle?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
 }
 
 // page component structure

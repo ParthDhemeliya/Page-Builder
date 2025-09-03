@@ -17,9 +17,11 @@ const StaticRenderer: React.FC<Props> = ({
   if (components.length === 0) {
     return (
       <div className="static-renderer">
-        <div className="static-renderer-header">
-          <h2>{title}</h2>
-        </div>
+        {title && (
+          <div className="static-renderer-header">
+            <h2>{title}</h2>
+          </div>
+        )}
         <div className="static-renderer-content">
           <div className="empty-state">
             <p>No components</p>
@@ -31,9 +33,11 @@ const StaticRenderer: React.FC<Props> = ({
 
   return (
     <div className="static-renderer">
-      <div className="static-renderer-header">
-        <h2>{title}</h2>
-      </div>
+      {title && (
+        <div className="static-renderer-header">
+          <h2>{title}</h2>
+        </div>
+      )}
       <div className="static-renderer-content">
         {components.map(component => (
           <div key={component.id} className="static-component-wrapper">
