@@ -83,7 +83,6 @@ const SortableComponent: React.FC<{
       <div
         onClick={e => {
           e.stopPropagation();
-          // Select component when clicking on the content area
           onSelectComponent(component);
         }}
         style={{ cursor: 'pointer' }}
@@ -129,7 +128,7 @@ const Canvas: React.FC<Props> = ({
   if (components.length === 0) {
     return (
       <div className="canvas">
-        <h3>Your page</h3>
+        <h3>My Page</h3>
         <div className="canvas-empty">
           <p>No components yet. Add some from the left.</p>
         </div>
@@ -139,7 +138,7 @@ const Canvas: React.FC<Props> = ({
 
   return (
     <div className="canvas">
-      <h3>Your page</h3>
+      <h3>My Page</h3>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

@@ -798,23 +798,23 @@
 }
 
 .dataset-button.sample {
-  background-color: #d1ecf1;
-  border-color: #bee5eb;
-  color: #0c5460;
+  background-color: #dce1e6;
+  border-color: #8c8d8e;
+  color: #89898a;
 }
 
 .dataset-button.sample:hover {
-  background-color: #bee5eb;
+  background-color: #d7dcdf;
 }
 
 .dataset-button.clear {
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-  color: #721c24;
+  background-color: #8a8a8e65;
+  border-color: #cccccb00;
+  color: #856404;
 }
 
 .dataset-button.clear:hover {
-  background-color: #f5c6cb;
+  background-color: #b9b8b6;
 }
 
 .dataset-content {
@@ -858,11 +858,6 @@
   background-color: #fff5f5;
 }
 
-.dataset-textarea.valid {
-  border-color: #28a745;
-  background-color: #f8fff9;
-}
-
 .dataset-error {
   display: flex;
   align-items: center;
@@ -885,10 +880,10 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
+  background-color: #a0a9a2;
+  /* border: 1px solid #c3e6cb; */
   border-radius: 4px;
-  color: #155724;
+  /* color: #155724; */
   font-size: 0.85rem;
 }
 
@@ -1158,7 +1153,7 @@
 /* Builder Mode Styles */
 .builder-mode {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 1fr;
   gap: 20px;
   min-height: 600px;
   box-sizing: border-box;

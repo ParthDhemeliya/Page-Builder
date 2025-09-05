@@ -31,11 +31,11 @@ export const parseDataset = (
   }
 };
 
-// replace {key} patterns in text with dataset values
+// replace key patterns in text with dataset values
 export const replaceDatasetKeys = (text: string, dataset: Dataset): string => {
   if (!text || !dataset) return text;
 
-  // Replace {key} patterns with dataset values
+  // Replace key patterns with dataset values
   return text.replace(/\{([^}]+)\}/g, (match, key) => {
     const value = dataset[key];
     return value !== undefined ? String(value) : match;
