@@ -84,13 +84,24 @@ const Inspector: React.FC<Props> = ({
           <input
             id="fontSize"
             type="number"
-            value={currentStyle.fontSize || ''}
-            onChange={e =>
-              updateStyle(
-                'fontSize',
-                e.target.value ? `${e.target.value}px` : ''
-              )
+            value={
+              typeof currentStyle.fontSize === 'string'
+                ? currentStyle.fontSize.replace(/px$/, '')
+                : currentStyle.fontSize || ''
             }
+            onChange={e => {
+              const raw = e.target.value;
+              if (!raw) {
+                updateStyle('fontSize', '');
+                return;
+              }
+              const numeric = parseInt(raw, 10);
+              if (Number.isNaN(numeric)) {
+                updateStyle('fontSize', '');
+                return;
+              }
+              updateStyle('fontSize', `${numeric}px`);
+            }}
             placeholder="16"
             style={{ color: '#007bff' }}
           />
@@ -149,14 +160,14 @@ const Inspector: React.FC<Props> = ({
           </select>
         </div>
 
-        {/* Button Style (for Button components) */}
+        {/* Button Style for Button components */}
         {selectedComponent.type === 'Button' && (
           <div className="inspector-field">
             <label htmlFor="buttonStyle">Button Style:</label>
             <select
               id="buttonStyle"
-              value={currentStyle.buttonStyle || 'primary'}
-              onChange={e => updateStyle('buttonStyle', e.target.value)}
+              value={selectedComponent.attributes.buttonStyle || 'primary'}
+              onChange={e => handleChange('buttonStyle', e.target.value)}
               style={{ color: '#007bff' }}
             >
               <option value="primary">Primary</option>
@@ -197,19 +208,24 @@ const Inspector: React.FC<Props> = ({
                 onChange={e => handleChange('action', e.target.value)}
                 style={{ color: '#007bff' }}
               >
-                <option value="alert">Show Alert</option>
+                <option value="alert">Alert</option>
                 <option value="console">Log to Console</option>
                 <option value="navigate">Navigate</option>
                 <option value="submit">Submit Form</option>
                 <option value="custom">Custom Action</option>
               </select>
             </div>
-            {selectedComponent.attributes.action === 'alert' &&
-              renderField(
-                'alertMessage',
-                'Alert Message',
-                selectedComponent.attributes.alertMessage || 'Button clicked!'
-              )}
+            {/* Debug: Current action value */}
+            {(selectedComponent.attributes.action === 'alert' ||
+              !selectedComponent.attributes.action) && (
+              <>
+                {renderField(
+                  'alertMessage',
+                  'Alert Message',
+                  selectedComponent.attributes.alertMessage || 'Button clicked!'
+                )}
+              </>
+            )}
             {selectedComponent.attributes.action === 'navigate' &&
               renderField(
                 'navigateUrl',
@@ -235,9 +251,26 @@ const Inspector: React.FC<Props> = ({
               'Label',
               selectedComponent.attributes.label || ''
             )}
+            <div className="inspector-field">
+              <label htmlFor="customValue">Custom Value:</label>
+              <input
+                id="customValue"
+                type="number"
+                value={selectedComponent.attributes.customValue || ''}
+                onChange={e => {
+                  const value = e.target.value;
+                  // Only allow numbers (including decimals and negative numbers)
+                  if (value === '' || /^-?\d*\.?\d*$/.test(value)) {
+                    handleChange('customValue', value);
+                  }
+                }}
+                placeholder="Enter number"
+                style={{ color: '#007bff' }}
+              />
+            </div>
             {renderField(
               'datasetKey',
-              'Data Key',
+              'Data Key (JSON Reference)',
               selectedComponent.attributes.datasetKey || ''
             )}
           </>
@@ -270,7 +303,6 @@ const Inspector: React.FC<Props> = ({
       <div className="inspector-content">
         <div className="component-info">
           <h4>{selectedComponent.type} Component</h4>
-          <p className="component-id">ID: {selectedComponent.id}</p>
         </div>
 
         <div className="inspector-section">
@@ -282,10 +314,6 @@ const Inspector: React.FC<Props> = ({
 
         <div className="inspector-section">
           <h5>Info</h5>
-          <div className="inspector-field">
-            <label>ID:</label>
-            <span>{selectedComponent.id}</span>
-          </div>
           <div className="inspector-field">
             <label>Type:</label>
             <span>{selectedComponent.type}</span>

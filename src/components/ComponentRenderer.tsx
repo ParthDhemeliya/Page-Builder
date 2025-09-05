@@ -15,7 +15,7 @@ const ComponentRenderer: React.FC<Props> = ({ component, dataset }) => {
     case 'Text':
       return <TextComponent component={component} dataset={dataset} />;
     case 'Button':
-      return <ButtonComponent component={component} />;
+      return <ButtonComponent component={component} dataset={dataset} />;
     case 'NumberField':
       return <NumberFieldComponent component={component} dataset={dataset} />;
     case 'FormulaField':

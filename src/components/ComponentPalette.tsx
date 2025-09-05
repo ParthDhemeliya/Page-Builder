@@ -6,7 +6,7 @@ interface Props {
 }
 
 const ComponentPalette: React.FC<Props> = ({ onAddComponent }) => {
-  // available component types
+  //component types
   const types = [
     { type: 'Text' as ComponentType, label: 'Text', icon: 'T' },
     { type: 'Button' as ComponentType, label: 'Button', icon: 'B' },

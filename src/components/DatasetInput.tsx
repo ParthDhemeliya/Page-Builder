@@ -48,7 +48,6 @@ const DatasetInput: React.FC<Props> = ({ dataset, onDatasetChange }) => {
     setIsUserTyping(true);
     setJsonInput(value);
 
-    // Clear existing timeout
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
@@ -86,32 +85,11 @@ const DatasetInput: React.FC<Props> = ({ dataset, onDatasetChange }) => {
     onDatasetChange(null);
   };
 
-  // load sample dataset
-  const loadSample = () => {
-    const sample = {
-      price: 100,
-      quantity: 3,
-      discount: 0.1,
-    };
-
-    console.log('Loading sample data:', sample);
-    setIsUserTyping(false); // Allow useEffect to update the textarea
-    // Update the dataset first, which will trigger the useEffect
-    onDatasetChange(sample);
-  };
-
   return (
     <div className="dataset-input">
       <div className="dataset-header">
         <h3>Dataset</h3>
         <div className="dataset-actions">
-          <button
-            className="dataset-button sample"
-            onClick={loadSample}
-            title="Load sample"
-          >
-            Sample
-          </button>
           <button
             className="dataset-button clear"
             onClick={handleClear}
@@ -134,31 +112,14 @@ const DatasetInput: React.FC<Props> = ({ dataset, onDatasetChange }) => {
           style={{ resize: 'vertical', color: '#007bff' }}
         />
 
-        {error && (
-          <div className="dataset-error">
-            <span className="error-icon">⚠</span>
-            {error}
-          </div>
-        )}
+        {error && <div className="dataset-error">{error}</div>}
 
         {isValid && dataset && (
           <div className="dataset-info">
-            <span className="success-icon">✓</span>
             Loaded {Object.keys(dataset).length} keys:{' '}
             {Object.keys(dataset).join(', ')}
           </div>
         )}
-
-        <div className="dataset-help">
-          <h4>Usage:</h4>
-          <ul>
-            <li>Enter valid JSON</li>
-            <li>
-              Use <code>{'{key}'}</code> in text to show values
-            </li>
-            <li>Example: "Price: {'{price}'}" shows "Price: 100"</li>
-          </ul>
-        </div>
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ interface Props {
 
 const TextComponent: React.FC<Props> = ({ component, dataset }) => {
   const text = component.attributes.label || 'Enter text here';
-  // replace key with dataset values
+
   const displayText = replaceDatasetKeys(text, dataset || {});
 
   return (

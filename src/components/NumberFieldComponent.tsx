@@ -14,26 +14,38 @@ const NumberFieldComponent: React.FC<Props> = ({ component, dataset }) => {
   // Replace dataset keys in label
   const displayLabel = replaceDatasetKeys(label, dataset || {});
 
-  // Get the value from dataset if datasetKey is provided
-  const datasetValue = datasetKey && dataset ? dataset[datasetKey] : '';
-  const displayValue = datasetValue !== undefined ? String(datasetValue) : '';
-
-  // handle number input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Number changed:', e.target.value);
-  };
+  // Get value: either from dataset (if datasetKey exists) or from custom value
+  let displayValue = '';
+  if (datasetKey && dataset && dataset[datasetKey] !== undefined) {
+    // Show value from JSON dataset
+    displayValue = String(dataset[datasetKey]);
+  } else if (datasetKey) {
+    // Show the datasetKey text if no dataset or key not found
+    displayValue = datasetKey;
+  } else {
+    // Show custom value if no datasetKey
+    displayValue = component.attributes.customValue || '';
+  }
 
   return (
     <div className="number-field-component" style={component.attributes.style}>
       <label>{displayLabel}</label>
-      <input
-        type="number"
-        placeholder="Enter number"
-        value={displayValue}
-        onChange={handleChange}
-        style={{ color: '#007bff' }}
-        readOnly={!!datasetKey} // Make read-only if bound to dataset
-      />
+      <div
+        className="number-display"
+        style={{
+          padding: '8px 12px',
+          border: '1px solid #d1d5db',
+          borderRadius: '4px',
+          backgroundColor: '#f9fafb',
+          color: '#374151',
+          fontSize: '16px',
+          minHeight: '20px',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        {displayValue || 'No value'}
+      </div>
     </div>
   );
 };

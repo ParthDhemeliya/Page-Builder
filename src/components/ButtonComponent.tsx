@@ -1,11 +1,40 @@
 import React from 'react';
-import type { PageComponent } from '../types';
+import type { PageComponent, Dataset } from '../types';
+import { replaceDatasetKeys } from '../utils/datasetUtils';
+import { evaluateFormula } from '../utils/formulaUtils';
 
 interface Props {
   component: PageComponent;
+  dataset?: Dataset | null;
 }
 
-const ButtonComponent: React.FC<Props> = ({ component }) => {
+const ButtonComponent: React.FC<Props> = ({ component, dataset }) => {
+  // Process text with both key replacement and formula evaluation
+  const processText = (text: string): string => {
+    // First, replace simple keys like name, age
+    let processedText = replaceDatasetKeys(text, dataset || {});
+
+    // Then, evaluate formulas like price * quantity}
+    processedText = processedText.replace(
+      /\{([^}]+)\}/g,
+      (match, expression) => {
+        // Check if it's a formula contains operators
+        if (
+          expression.includes('+') ||
+          expression.includes('-') ||
+          expression.includes('*') ||
+          expression.includes('/')
+        ) {
+          const result = evaluateFormula(expression, dataset || {});
+          return result.success ? result.result?.toString() || match : match;
+        }
+        return match;
+      }
+    );
+
+    return processedText;
+  };
+
   // handle button click based on action type
   const handleClick = () => {
     const action = component.attributes.action || 'alert';
@@ -13,7 +42,8 @@ const ButtonComponent: React.FC<Props> = ({ component }) => {
     switch (action) {
       case 'alert': {
         const message = component.attributes.alertMessage || 'Button clicked!';
-        alert(message);
+        const processedMessage = processText(message);
+        alert(processedMessage);
         break;
       }
 
@@ -59,6 +89,9 @@ const ButtonComponent: React.FC<Props> = ({ component }) => {
   const buttonStyle = component.attributes.buttonStyle || 'primary';
   const buttonClass = `button-component button-${buttonStyle}`;
 
+  const buttonLabel = component.attributes.label || 'Button';
+  const displayLabel = processText(buttonLabel);
+
   return (
     <button
       className={buttonClass}
@@ -72,7 +105,7 @@ const ButtonComponent: React.FC<Props> = ({ component }) => {
       }}
       title="Single click to select, double click to trigger action"
     >
-      {component.attributes.label || 'Button'}
+      {displayLabel}
     </button>
   );
 };

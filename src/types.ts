@@ -7,9 +7,9 @@ export type ComponentType = 'Text' | 'Button' | 'NumberField' | 'FormulaField';
 export interface ComponentAttributes {
   label?: string;
   datasetKey?: string;
+  customValue?: string; // Add this line
   formulaExpression?: string;
   style?: React.CSSProperties;
-  // Button-specific properties
   action?: string;
   alertMessage?: string;
   navigateUrl?: string;

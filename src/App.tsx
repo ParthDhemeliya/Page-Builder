@@ -7,74 +7,8 @@ import DatasetInput from './components/DatasetInput';
 import StaticRenderer from './components/StaticRenderer';
 import type { PageComponent, ComponentType, Dataset } from './types';
 
-// demo page with sample components
-const samplePage: PageComponent[] = [
-  {
-    id: '1',
-    type: 'Text',
-    attributes: { label: 'Product Summary' },
-    author: 'user',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    type: 'Text',
-    attributes: { label: 'Product Name: Laptop' },
-    author: 'user',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    type: 'Text',
-    attributes: { label: 'Unit Price: {price}' },
-    author: 'user',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    type: 'Text',
-    attributes: { label: 'Quantity: {quantity}' },
-    author: 'user',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '5',
-    type: 'Text',
-    attributes: { label: 'Discount: {discount}' },
-    author: 'user',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '6',
-    type: 'FormulaField',
-    attributes: {
-      label: 'Total: {price * quantity}',
-      formulaExpression: '{price * quantity}',
-    },
-    author: 'user',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '7',
-    type: 'FormulaField',
-    attributes: {
-      label: 'Final: {price * quantity * (1 - discount)}',
-      formulaExpression: '{price * quantity * (1 - discount)}',
-    },
-    author: 'user',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '8',
-    type: 'Button',
-    attributes: { label: 'Buy Now' },
-    author: 'user',
-    createdAt: new Date().toISOString(),
-  },
-];
-
 function App() {
-  const [components, setComponents] = useState<PageComponent[]>(samplePage);
+  const [components, setComponents] = useState<PageComponent[]>([]);
   const [selectedComponent, setSelectedComponent] =
     useState<PageComponent | null>(null);
   const [dataset, setDataset] = useState<Dataset | null>(null);
@@ -128,8 +62,6 @@ function App() {
     setDataset(newDataset);
   };
 
-  // handle generate button click
-
   return (
     <div
       className="app"
@@ -159,7 +91,6 @@ function App() {
           </div>
         </div>
       </header>
-
       {isPreviewMode ? (
         <div className="preview-section">
           <StaticRenderer
