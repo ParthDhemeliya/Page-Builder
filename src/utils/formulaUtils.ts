@@ -57,6 +57,16 @@ export const evaluateFormula = (
       throw new Error('Formula contains unsafe characters');
     }
 
+    // Check for invalid operator sequences
+    if (/\+\s*\+|-\s*-|\*\s*\*|\/\s*\//.test(processedFormula)) {
+      throw new Error('Formula contains invalid operator sequences');
+    }
+
+    // Check if formula contains only operators (no numbers)
+    if (!/[0-9]/.test(processedFormula)) {
+      throw new Error('Formula contains unsafe characters');
+    }
+
     // evaluate the formula safely
     const result = Function(
       '"use strict"; return (' + processedFormula + ')'
@@ -80,7 +90,7 @@ export const formatFormulaDisplay = (
   formula: string,
   dataset: Dataset
 ): string => {
-  if (!formula.trim()) return '';
+  if (!formula) return formula; // Return original string including whitespace
 
   try {
     return formula.replace(/\{([^}]+)\}/g, (match, key) => {
