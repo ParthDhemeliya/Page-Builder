@@ -15,7 +15,7 @@ const DatasetInput: React.FC<Props> = ({ dataset, onDatasetChange }) => {
     }
     return '';
   });
-  const [error, setError] = useState<string | null>(null);
+  const [error, setErrorState] = useState<string | null>(null);
   const [isValid, setIsValid] = useState(false);
   const [isUserTyping, setIsUserTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState<number | null>(null);
@@ -28,7 +28,6 @@ const DatasetInput: React.FC<Props> = ({ dataset, onDatasetChange }) => {
       console.log('Setting JSON input to:', expectedJson);
       setJsonInput(expectedJson);
       setIsValid(true);
-      setError(null);
     }
   }, [dataset, isUserTyping]);
 
@@ -58,7 +57,7 @@ const DatasetInput: React.FC<Props> = ({ dataset, onDatasetChange }) => {
     setTypingTimeout(newTimeout);
 
     if (!value.trim()) {
-      setError(null);
+      setErrorState(null);
       setIsValid(false);
       onDatasetChange(null);
       return;
@@ -67,11 +66,11 @@ const DatasetInput: React.FC<Props> = ({ dataset, onDatasetChange }) => {
     const result = parseDataset(value);
 
     if (result.success) {
-      setError(null);
+      setErrorState(null);
       setIsValid(true);
       onDatasetChange(result.data!);
     } else {
-      setError(result.error!);
+      setErrorState(result.error!);
       setIsValid(false);
       onDatasetChange(null);
     }
@@ -80,7 +79,6 @@ const DatasetInput: React.FC<Props> = ({ dataset, onDatasetChange }) => {
   // clear dataset input
   const handleClear = () => {
     setJsonInput('');
-    setError(null);
     setIsValid(false);
     onDatasetChange(null);
   };

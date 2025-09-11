@@ -1,4 +1,5 @@
 import { replaceDatasetKeys } from '../datasetUtils';
+import type { Dataset } from '../../types';
 
 describe('datasetUtils', () => {
   describe('replaceDatasetKeys', () => {
@@ -172,7 +173,7 @@ describe('datasetUtils', () => {
     test('should handle whitespace in keys', () => {
       const datasetWithSpaces = { ' price ': 100 };
       const result = replaceDatasetKeys('Price: { price }', datasetWithSpaces);
-      expect(result).toBe('Price: 100'); // Should handle spaces in keys
+      expect(result).toBe('Price: 100');
     });
   });
 });

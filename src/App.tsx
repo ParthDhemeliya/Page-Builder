@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import './App.css';
-import ComponentPalette from './components/ComponentPalette';
-import Canvas from './components/Canvas';
-import Inspector from './components/Inspector';
-import DatasetInput from './components/DatasetInput';
-import StaticRenderer from './components/StaticRenderer';
 import type { PageComponent, ComponentType, Dataset } from './types';
+import ErrorBoundary from './components/ErrorBoundary';
+import { useErrorHandler } from './hooks/useErrorHandler';
+
+// Lazy load components for better performance
+const ComponentPalette = lazy(() => import('./components/ComponentPalette'));
+const Canvas = lazy(() => import('./components/Canvas'));
+const Inspector = lazy(() => import('./components/Inspector'));
+const DatasetInput = lazy(() => import('./components/DatasetInput'));
+const StaticRenderer = lazy(() => import('./components/StaticRenderer'));
 
 function App() {
   const [components, setComponents] = useState<PageComponent[]>([]);
@@ -13,6 +17,9 @@ function App() {
     useState<PageComponent | null>(null);
   const [dataset, setDataset] = useState<Dataset | null>(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+
+  // Initialize error handler
+  const { handleError } = useErrorHandler();
 
   // add new component to page
   const addComponent = (type: ComponentType) => {
@@ -57,78 +64,113 @@ function App() {
     setSelectedComponent(updatedComponent);
   };
 
-  // handle dataset updates
+  // handle dataset updates with error handling
   const handleDatasetChange = (newDataset: Dataset | null) => {
-    setDataset(newDataset);
+    try {
+      setDataset(newDataset);
+    } catch (error) {
+      handleError(error as Error, { context: 'handleDatasetChange' });
+    }
   };
 
-  return (
-    <div
-      className="app"
-      style={{ width: '100%', padding: '20px', boxSizing: 'border-box' }}
-    >
-      <header className="app-header mb-6 pb-5 border-b">
-        <div className="flex items-start justify-between">
-          <div className="text-left">
-            <h1 className="text-3xl font-semibold text-slate-800 mb-1">
-              Page Builder
-            </h1>
-            <p className="text-slate-500 text-sm">
-              Build pages with dynamic data
-            </p>
-          </div>
-          <div className="preview-toggle flex items-center gap-3">
-            <span className="text-sm text-slate-600">Builder</span>
-            <label className="preview-toggle-switch">
-              <input
-                type="checkbox"
-                checked={isPreviewMode}
-                onChange={e => setIsPreviewMode(e.target.checked)}
-              />
-              <span className="preview-toggle-slider"></span>
-            </label>
-            <span className="text-sm text-slate-600">Preview</span>
-          </div>
-        </div>
-      </header>
-      {isPreviewMode ? (
-        <div className="preview-section">
-          <StaticRenderer
-            components={components}
-            dataset={dataset}
-            title="Generated Page"
-          />
-        </div>
-      ) : (
-        <div className="app-layout builder-mode grid gap-6">
-          <aside className="sidebar bg-white rounded-lg p-5 shadow border">
-            <ComponentPalette onAddComponent={addComponent} />
-            <DatasetInput
-              dataset={dataset}
-              onDatasetChange={handleDatasetChange}
-            />
-          </aside>
-
-          <main className="main-content bg-white rounded-lg p-5 shadow border">
-            <Canvas
-              components={components}
-              onRemoveComponent={removeComponent}
-              onSelectComponent={selectComponent}
-              onReorderComponents={reorderComponents}
-              selectedComponent={selectedComponent}
-              dataset={dataset}
-            />
-          </main>
-
-          <aside className="inspector-sidebar bg-white rounded-lg p-5 shadow border">
-            <Inspector
-              selectedComponent={selectedComponent}
-              onUpdateComponent={updateComponent}
-            />
-          </aside>
-        </div>
-      )}
+  // Loading component for Suspense fallback
+  const LoadingSpinner = () => (
+    <div className="loading-spinner">
+      <div className="spinner"></div>
+      <p>Loading component...</p>
     </div>
+  );
+
+  return (
+    <ErrorBoundary>
+      <div
+        className="app"
+        style={{ width: '100%', padding: '20px', boxSizing: 'border-box' }}
+      >
+        <header className="app-header mb-6 pb-5 border-b">
+          <div className="flex items-start justify-between">
+            <div className="text-left">
+              <h1 className="text-3xl font-semibold text-slate-800 mb-1">
+                Page Builder
+              </h1>
+              <p className="text-slate-500 text-sm">
+                Build pages with dynamic data
+              </p>
+            </div>
+            <div className="preview-toggle flex items-center gap-3">
+              <span className="text-sm text-slate-600">Builder</span>
+              <label className="preview-toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={isPreviewMode}
+                  onChange={e => setIsPreviewMode(e.target.checked)}
+                />
+                <span className="preview-toggle-slider"></span>
+              </label>
+              <span className="text-sm text-slate-600">Preview</span>
+            </div>
+          </div>
+        </header>
+
+        <Suspense fallback={<LoadingSpinner />}>
+          {isPreviewMode ? (
+            <div className="preview-section">
+              <ErrorBoundary>
+                <StaticRenderer
+                  components={components}
+                  dataset={dataset}
+                  title="Generated Page"
+                />
+              </ErrorBoundary>
+            </div>
+          ) : (
+            <div className="app-layout builder-mode grid gap-6">
+              <aside className="sidebar bg-white rounded-lg p-5 shadow border">
+                <ErrorBoundary>
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <ComponentPalette onAddComponent={addComponent} />
+                  </Suspense>
+                </ErrorBoundary>
+                <ErrorBoundary>
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <DatasetInput
+                      dataset={dataset}
+                      onDatasetChange={handleDatasetChange}
+                    />
+                  </Suspense>
+                </ErrorBoundary>
+              </aside>
+
+              <main className="main-content bg-white rounded-lg p-5 shadow border">
+                <ErrorBoundary>
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <Canvas
+                      components={components}
+                      onRemoveComponent={removeComponent}
+                      onSelectComponent={selectComponent}
+                      onReorderComponents={reorderComponents}
+                      selectedComponent={selectedComponent}
+                      dataset={dataset}
+                    />
+                  </Suspense>
+                </ErrorBoundary>
+              </main>
+
+              <aside className="inspector-sidebar bg-white rounded-lg p-5 shadow border">
+                <ErrorBoundary>
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <Inspector
+                      selectedComponent={selectedComponent}
+                      onUpdateComponent={updateComponent}
+                    />
+                  </Suspense>
+                </ErrorBoundary>
+              </aside>
+            </div>
+          )}
+        </Suspense>
+      </div>
+    </ErrorBoundary>
   );
 }
 
